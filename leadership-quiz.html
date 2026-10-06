@@ -23,7 +23,6 @@ body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sa
 .btn-secondary:hover{background:#e0e0e0}
 .tm-quote{font-size:14px;color:var(--text-light);font-style:italic;padding:12px 20px;background:var(--primary-light);border-radius:12px;border-left:4px solid var(--primary)}
 .author-link{font-size:14px;color:var(--text-light)}
-.source-note{font-size:11.5px;color:#9aa0a6;line-height:1.7;max-width:440px;margin:10px auto 0;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
 .test-container{padding:28px 32px;text-align:left}
 .topbar{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .topbar-emoji{font-size:22px}
@@ -38,10 +37,10 @@ body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sa
 .question-item.selected{border-color:var(--primary);background:var(--primary-light)}
 .question-num{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .question-text{font-size:15px;font-weight:600;margin-bottom:14px;line-height:1.5}
-.option-list{display:flex;gap:10px}
-.option-btn{flex:1;padding:10px;text-align:center;border:1px solid #ccc;border-radius:8px;cursor:pointer;font-size:14px;transition:all .2s}
-.option-btn:hover{background:var(--primary-light);border-color:var(--primary)}
-.option-btn.selected{background:var(--primary);color:#fff;border-color:var(--primary)}
+.option-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .option-btn{padding:10px 14px;background:#fff;border:2px solid #e8e8e8;border-radius:10px;font-size:14px;cursor:pointer;transition:all 0.25s;text-align:left;line-height:1.4}
+ .option-btn:hover{background:var(--primary-light);border-color:var(--primary)}
+ .option-btn.selected{background:var(--primary);color:#fff;border-color:var(--primary)}
 .actions-bottom{border-top:1px solid #eee;padding-top:20px}
 .hint{font-size:13px;color:var(--text-light);margin-bottom:16px;text-align:center}
 .actions-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
@@ -72,7 +71,7 @@ body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sa
 .animate-in{animation:fadeInUp .5s ease forwards}
 @keyframes scaleIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 .scale-in{animation:scaleIn .4s ease forwards}
-@media(max-width:600px){.card{padding:28px 20px}.hero-title{font-size:26px}.option-list{flex-wrap:wrap}.type-name{font-size:32px}}
+@media(max-width:600px){.card{padding:28px 20px}.hero-title{font-size:26px}.option-list{grid-template-columns:1fr}.type-name{font-size:32px}}
 </style>
 </head>
 <body>
@@ -90,8 +89,7 @@ body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sa
  <p style="font-size:13px;color:var(--text-light);margin-top:8px;">不填写会显示"朋友"</p>
  <button class="btn-primary" id="startBtn">🚀 开始测评</button>
 <div class="tm-quote">"Where Leaders Are Made" —— 了解自己的领导风格，才能带出更好的团队。</div>
-<div class="author-link">👨‍💻 测评作者：孙煦明 | 8种领导风格深度解读</div>
- <div class="source-note">量表改编自 Toastmasters International 公开教育项目 <strong>CS8207</strong>《Understanding Your Leadership Style》（Level 2，48 题，0–3 分评分）</div>
+<div class="author-link">👨‍💻 测评作者：孙煦明 | 基于 Toastmasters CS8207 手册</div>
 </div>
 </section>
 <section id="testScreen" class="screen">
@@ -107,7 +105,7 @@ body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sa
 <section id="resultScreen" class="screen">
 <div class="card result-container">
 <div id="resultContent"></div>
-<div class="summit-box"><span>🌟 测评作者：孙煦明 | 量表改编自 Toastmasters CS8207《Understanding Your Leadership Style》</span></div>
+<div class="summit-box"><span>🌟 测评作者：孙煦明 | 基于 Toastmasters CS8207 手册</span></div>
 <button class="retest-btn" id="retestBtn">🔄 重新测试</button>
 </div>
 </section>
