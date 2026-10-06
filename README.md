@@ -10,10 +10,12 @@
 
 ## 内容
 
-| 测评 | 题量 | 结果维度 |
-|---|---|---|
-| CSI 沟通风格测评 | 12 题 | 4 种风格（direct / interactive / supportive / analytical）|
-| 领导风格测评 | 48 题 | 8 种风格（官僚 / 权威 / 创新 / 带头 / 民主 / 亲和 / 教练 / 无私）|
+| 测评 | 题量 | 结果维度 | 量表来源 |
+|---|---|---|---|
+| CSI 沟通风格测评 | 12 题 | 4 种风格（direct / interactive / supportive / analytical）| Toastmasters CS8206 手册 |
+| 领导风格测评 | 48 题 | 8 种风格（官僚 / 权威 / 创新 / 带头 / 民主 / 亲和 / 教练 / 无私）| Toastmasters Pathways Level 2 · Project 1《Understanding Your Leadership Style》|
+
+两项量表均改编自 Toastmasters International 公开教育项目，页面已标注来源，非官方产品。
 
 所有作答与计分均在浏览器本地完成，**不会上传任何数据**。
 
