@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>领导风格测评 - 发现你的领导力基因</title>
+<style>
+:root{--primary:#25c5bd;--primary-light:rgba(37,197,189,0.08);--primary-dark:#1a9e97;--bg:#f5f3f0;--card:#fff;--text:#333;--text-light:#666;--shadow:0 4px 20px rgba(0,0,0,0.08);--radius:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.shell{width:100%;max-width:680px}
+.screen{display:none}
+.screen.active{display:block}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:40px 36px;text-align:center}
+.hero-fullscreen{min-height:580px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.hero-emoji{font-size:64px;line-height:1}
+.hero-title{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--primary-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-subtitle{font-size:16px;color:var(--text-light);line-height:1.7;max-width:480px}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;padding:14px 40px;border-radius:50px;font-size:18px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(37,197,189,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,197,189,.5)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-secondary{background:#f0f0f0;color:var(--text);border:none;padding:12px 28px;border-radius:50px;font-size:15px;font-weight:500;cursor:pointer}
+.btn-secondary:hover{background:#e0e0e0}
+.tm-quote{font-size:14px;color:var(--text-light);font-style:italic;padding:12px 20px;background:var(--primary-light);border-radius:12px;border-left:4px solid var(--primary)}
+.author-link{font-size:14px;color:var(--text-light)}
+.test-container{padding:28px 32px;text-align:left}
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.topbar-emoji{font-size:22px}
+.progress{flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-dark));border-radius:4px;transition:width .4s ease;width:0%}
+.progress-text{font-size:14px;color:var(--text-light);font-weight:600;min-width:50px;text-align:right}
+.question-list{display:flex;flex-direction:column;gap:20px;margin-bottom:24px;max-height:60vh;overflow-y:auto}
+.question{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #eee}
+.question-item{padding:20px;background:#fafafa;border-radius:12px;border:2px solid transparent;transition:all .3s}
+.question-item.selected{border-color:var(--primary);background:var(--primary-light)}
+.question-num{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.question-text{font-size:15px;font-weight:600;margin-bottom:14px;line-height:1.5}
+.option-list{display:flex;gap:10px}
+.option-btn{flex:1;padding:10px;text-align:center;border:1px solid #ccc;border-radius:8px;cursor:pointer;font-size:14px;transition:all .2s}
+.option-btn:hover{background:var(--primary-light);border-color:var(--primary)}
+.option-btn.selected{background:var(--primary);color:#fff;border-color:var(--primary)}
+.actions-bottom{border-top:1px solid #eee;padding-top:20px}
+.hint{font-size:13px;color:var(--text-light);margin-bottom:16px;text-align:center}
+.actions-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.result-container{padding:32px;text-align:center}
+.result-header{display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:28px}
+.result-icon-wrap{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;margin-bottom:4px}
+.type-badge{display:inline-block;padding:6px 20px;border-radius:50px;font-size:13px;font-weight:600;margin-bottom:8px}
+.type-name{font-size:42px;font-weight:900;letter-spacing:2px;margin-bottom:4px}
+.match-badge{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:6px 20px;border-radius:50px;font-size:14px;font-weight:700}
+.analysis-box{background:#fafafa;border-radius:12px;padding:24px;text-align:left;margin-bottom:16px}
+.box-title{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.desc-text{font-size:15px;line-height:1.8;color:var(--text);margin-bottom:16px}
+.score-item{margin:5px 0;font-size:15px;color:var(--text)}
+.tips-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.tips-list li{font-size:14px;color:var(--text-light);padding-left:20px;position:relative}
+.tips-list li::before{content:"💡";position:absolute;left:0}
+.others-view-grid{display:flex;flex-direction:column;gap:12px}
+.others-view-card{display:flex;align-items:flex-start;gap:10px;padding:14px;background:#fff;border-radius:10px;border-left:4px solid;text-align:left}
+.others-view-card .card-emoji{font-size:22px;flex-shrink:0;margin-top:2px}
+.others-view-card .card-label{font-weight:700;font-size:14px;margin-bottom:4px}
+.others-view-card .card-text{font-size:14px;color:#555;line-height:1.6}
+.summit-box{display:flex;align-items:center;justify-content:center;gap:10px;padding-top:16px;border-top:1px solid #eee;font-size:13px;color:var(--text-light)}
+.retest-btn{display:inline-block;margin-top:16px;padding:10px 28px;border:2px solid var(--primary);border-radius:50px;color:var(--primary);font-size:14px;font-weight:600;cursor:pointer;background:transparent}
+.retest-btn:hover{background:var(--primary);color:#fff}
+.other-styles{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.other-style-chip{padding:6px 16px;border-radius:50px;font-size:13px;font-weight:600;border:2px solid #e0e0e0;color:var(--text-light)}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeInUp .5s ease forwards}
+@keyframes scaleIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.scale-in{animation:scaleIn .4s ease forwards}
+@media(max-width:600px){.card{padding:28px 20px}.hero-title{font-size:26px}.option-list{flex-wrap:wrap}.type-name{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<section id="introScreen" class="screen active">
+<div class="card hero-fullscreen">
+<div class="hero-emoji">🎯</div>
+<h1 class="hero-title">领导风格测评</h1>
+<p class="hero-subtitle">🌟 Leadership Style Indicator —— 每个人都有独特的领导风格，你是重规则、讲愿景，还是关注赋能、培养人？测评帮你发现自己的主导领导风格！</p>
+<button class="btn-primary" id="startBtn">🚀 开始测评</button>
+<div class="tm-quote">"Where Leaders Are Made" —— 了解自己的领导风格，才能带出更好的团队。</div>
+<div class="author-link">👨‍💻 测评作者：孙煦明 | 8种领导风格深度解读</div>
+</div>
+</section>
+<section id="testScreen" class="screen">
+<div class="card test-container">
+<div class="topbar"><span class="topbar-emoji">📝</span><div class="progress"><div id="progressBar" class="progress-bar"></div></div><div id="progressText" class="progress-text">0 / 48</div></div>
+<div id="questionList" class="question-list"></div>
+<div class="actions-bottom">
+<div id="testHint" class="hint">💡 请完成所有题目，系统将为你分析领导风格。</div>
+<div class="actions-buttons"><button class="btn-secondary" id="homeBtn">🏠 返回首页</button><button class="btn-primary" id="submitBtn" disabled>提交答案</button></div>
+</div>
+</div>
+</section>
+<section id="resultScreen" class="screen">
+<div class="card result-container">
+<div id="resultContent"></div>
+<div class="summit-box"><span>🌟 测评作者：孙煦明 | 领导风格测评</span></div>
+<button class="retest-btn" id="retestBtn">🔄 重新测试</button>
+</div>
+</section>
+</div>
+<script>
+const questions = [
+ {id:1,t:"我注重他人的职业发展"},
+ {id:2,t:"相对我领导下的人，我经验信息更丰富"},
+ {id:3,t:"我允许利益相关者参与决策"},
+ {id:4,t:"为实现目标我必须掌控全局"},
+ {id:5,t:"我提倡创新解决问题"},
+ {id:6,t:"高效完成比完美更重要"},
+ {id:7,t:"我始终提供积极反馈"},
+ {id:8,t:"我严密安排监控任务"},
+ {id:9,t:"我选拔技艺精湛有主见的员工"},
+ {id:10,t:"重大决策前我会询问他人意见"},
+ {id:11,t:"希望别人关注我的努力而非成果"},
+ {id:12,t:"为更好结果可放宽交付日期"},
+ {id:13,t:"团队和谐与成果同等重要"},
+ {id:14,t:"我优先关注团队与服务对象需求"},
+ {id:15,t:"我投入时间帮员工培养技能"},
+ {id:16,t:"我积极看待组织目标"},
+ {id:17,t:"我明确表达期望"},
+ {id:18,t:"我营造打破常规的思考氛围"},
+ {id:19,t:"我适应习惯和传统"},
+ {id:20,t:"我清晰阐述成功路径"},
+ {id:21,t:"我以身作则领导团队"},
+ {id:22,t:"我善于达成共识"},
+ {id:23,t:"我协助解决成员冲突"},
+ {id:24,t:"我营造满足情感需求的环境"},
+ {id:25,t:"我坚持自己的价值观信念"},
+ {id:26,t:"我乐于冒险"},
+ {id:27,t:"重复任务力求完美团队表现最佳"},
+ {id:28,t:"激励他人最好方式是投入时间"},
+ {id:29,t:"我清楚成员独特情感需求"},
+ {id:30,t:"我致力于打造社区"},
+ {id:31,t:"我明确表述愿景"},
+ {id:32,t:"团队知识技术结合效果最好"},
+ {id:33,t:"我只求员工最好结果"},
+ {id:34,t:"我接受认同员工独特性"},
+ {id:35,t:"我喜欢思考未来"},
+ {id:36,t:"人人应严格遵守政策规程"},
+ {id:37,t:"我给予鼓舞人心的反馈"},
+ {id:38,t:"我全权负责团队行动"},
+ {id:39,t:"我设定高标准激励他人"},
+ {id:40,t:"我热衷于追求卓越"},
+ {id:41,t:"我花时间了解他人对我的期望"},
+ {id:42,t:"我接受偶尔让他人领导"},
+ {id:43,t:"我给他人决策参与权"},
+ {id:44,t:"我以让员工满意为荣"},
+ {id:45,t:"我倡导支持他人成功"},
+ {id:46,t:"每位成员都需要倾听尊重"},
+ {id:47,t:"我不派自己没准备好的任务"},
+ {id:48,t:"我希望员工任何情况都完美"}
+];
+
+const styleData = {
+ bureaucratic:{emoji:"📋",color:"#8c8c8c",bg:"rgba(140,140,140,0.12)",name:"官僚型",desc:"你是一个官僚型领导者！注重规则和流程，强执行、高控制。喜欢结构化、规范化的环境，通过严格的程序和政策来确保任务完成。风险意识强、稳健可靠，适合标准化场景和紧急决策。但要小心过度控制可能抑制团队的主动性和创造力。",tips:["与权威型沟通：直接切入重点，简洁高效","与创新型沟通：给他们空间和自由度，避免过度约束","与亲和型沟通：注重关系维护，放慢节奏","与教练型沟通：提供支持性反馈，鼓励发展"],view:{authoritative:"觉得你太死板、缺乏灵活度。欣赏你的可靠性，但认为你过于依赖程序。",creative:"觉得你太保守、不敢冒险。理解你的稳健，但也希望你多给尝试空间。",supportive:"觉得你过于严肃、缺乏情感温度。觉得你像一台精密机器，但团队还需要温度。",coaching:"觉得你做决定太慢、过于谨慎。欣赏你的风险意识，但认为你有时用程序拖延决策。"}},
+ authoritative:{emoji:"👑",color:"#7b79d6",bg:"rgba(123,121,214,0.12)",name:"权威型",desc:"你是一个权威型领导者！善于定方向、控全局，给团队明确的标准和愿景。坚定自信，敢于拍板，是团队的主心骨。善于激励和动员，适合变革期和需要明确方向的场景。但要避免过于强势，压制团队的不同声音。",tips:["与民主型沟通：多听取意见，给予参与感","与创新型沟通：鼓励创意，给他们发声的机会","与亲和型沟通：注重团队氛围，别忽略关系","与教练型沟通：支持员工成长，别只关注目标"],view:{democratic:"觉得你太霸道、不够民主。理解你的决断力，但也希望有更多参与感。",creative:"觉得你过于控制、缺乏信任。认可你的方向感，但给空间效果更好。",supportive:"觉得你太严肃、缺乏情感连接。欣赏你的领导力，希望你多关注团队情绪。",coaching:"你怎么看结果、不看过程。希望你多关注员工成长。"}},
+ creative:{emoji:"💡",color:"#f5a623",bg:"rgba(245,166,35,0.12)",name:"创新型",desc:"你是一个创新型领导者！重愿景、敢冒险、鼓励创意，善于打破常规。擅长复杂问题分析和破局创新，是团队的创意发动机。鼓励试错、容忍失败，适合需要突破性思维的场景。但要警惕过于理想化而忽视执行落地。",tips:["与权威型沟通：用数据和愿景说服，展示逻辑","与民主型沟通：提供充分信息，让大家参与讨论","与亲和型沟通：关注情感需求，别只谈创意","与教练型沟通：给予成长空间，鼓励尝试"],view:{authoritative:"觉得你太天马行空、不够落地。欣赏创造力，但认为想法多但执行跟不上。",democratic:"觉得你有时过于主导，挤压了别人的声音。希望你多等一等。",supportive:"觉得你有时太理性、不够关心人。欣赏创新能力，希望多关注团队感受。",coaching:"觉得你缺乏耐心、不够细致。希望给创意一些时间慢慢成熟。"}},
+ pacesetting:{emoji:"⚡",color:"#ad2624",bg:"rgba(173,38,36,0.12)",name:"带头型",desc:"你是一个带头型领导者！高效率、高标准、以身作则，是团队的火车头。对结果有强烈执念，追求卓越、注重效率，是团队中最拼的那个人。以身作则、身先士卒，适合高手团队和快速攻坚。但要注意别让高标准变成高压，别把自己累垮。",tips:["与创新型沟通：给创意空间，别用执行标准约束","与亲和型沟通：放慢节奏，关注团队情绪","与民主型沟通：多听意见，别一个人说了算","与教练型沟通：注重培养，给成长时间"],view:{creative:"觉得你太急躁、给的压力太大。希望你能慢下来，让团队有喘息空间。",supportive:"觉得你太严肃、缺乏关怀。欣赏敬业，但也希望你关注大家的状态。",coaching:"觉得你只关注结果、不关注人。希望在追求卓越时多关注员工成长。",democratic:"觉得你太独断、不够民主。希望在决策上有更多参与。"}},
+ democratic:{emoji:"🤝",color:"#19a197",bg:"rgba(25,161,151,0.12)",name:"民主型",desc:"你是一个民主型领导者！重共识、听意见、集体决策，是团队的粘合剂。善于营造开放氛围，让每个人都参与决策。重视每个人的声音，追求共识和认同，适合需要凝聚力的团队。但要注意决策效率，避免为了民主而拖延。",tips:["与权威型沟通：用数据支持你的观点，增强说服力","与创新型沟通：鼓励不同声音，融合创意","与带头型沟通：争取表达机会，别沉默","与教练型沟通：建立信任，保持真诚"],view:{authoritative:"觉得你做决定太慢、缺乏主见。希望你别过于追求共识而延误决策。",creative:"觉得你不够大胆、缺乏冒险精神。希望关键时刻敢于拍板。",supportive:"觉得你有时缺乏立场、不够坚定。希望团队需要时给明确决定。",coaching:"觉得你过于在意他人看法、失去自我。需要时也坚持自己判断。"}},
+ supportive:{emoji:"💚",color:"#25c5bd",bg:"rgba(37,197,189,0.12)",name:"亲和型",desc:"你是一个亲和型领导者！重和谐、顾情绪、团队凝聚，是团队的温暖底色。关注每个人的感受，善于营造安全感，是团队的定海神针。以关系为导向，追求和谐，适合提士气和修复关系。但要警惕过度追求和谐而回避冲突，该拍板时也要果断。",tips:["与权威型沟通：温和表达意见，争取支持","与创新型沟通：保持开放心态，接纳新想法","与带头型沟通：主动争取参与，别只是配合","与民主型沟通：多表达观点，不要总是让步"],view:{authoritative:"觉得你缺乏决断、立场不够坚定。希望关键时刻更果断。",creative:"觉得你过于保守、不够大胆。希望给尝试的机会。",coaching:"觉得你过于关注他人、忽视自己。希望也关注自己的需求。",democratic:"觉得你有时没有主见、随波逐流。需要时给清晰立场。"}},
+ coaching:{emoji:"🌱",color:"#52c41a",bg:"rgba(82,196,26,0.12)",name:"教练型",desc:"你是一个教练型领导者！重培养、给反馈、助力成长，是团队的人才发动机。关注每个人的长期发展，善于发现潜力并提供指导。通过投入时间激励他人，是一对一辅导的高手。但要警惕过度投入个人精力，在支持与指导之间找到平衡。",tips:["与权威型沟通：用成果说话，展示成长价值","与创新型沟通：给挑战性任务，激发创造力","与亲和型沟通：多给予情感支持","与民主型沟通：鼓励自主决策，给空间"],view:{authoritative:"觉得你节奏太慢、效率不够。希望先完成任务再讨论成长。",creative:"觉得你过于约束、不够放手。希望给更多自由度让他们探索。",supportive:"觉得你过于关注目标、缺乏温度。希望多关注员工感受。",democratic:"觉得你有时过于主导。希望多听大家想法而不是直接给答案。"}},
+ servant:{emoji:"🌍",color:"#0d7c66",bg:"rgba(13,124,102,0.12)",name:"无私型",desc:"你是一个无私型领导者！重服务、善倾听、赋能他人，是团队的服务者而非指挥官。谦逊低调，把团队需求放在第一位，善于授权和赋能他人。关注长期团队建设，适合文化建设和可持续团队。但要避免过度服务而失去方向，该引领时也要引领。",tips:["与权威型沟通：用服务精神影响，展示价值","与创新型沟通：赋能创意，给资源支持","与亲和型沟通：共建情感连接","与教练型沟通：协作培养，形成合力"],view:{authoritative:"觉得你过于被动、缺乏方向感。希望你能更主动设定方向。",creative:"觉得你过于保守、不够冒险。希望关键时刻推动创新。",supportive:"觉得你缺乏个人立场。希望坚持自己的价值观。",coaching:"觉得你服务过度、失去自我。希望也关注自己的成长。"}}
+};
+
+let ans = {};
+const box = document.getElementById("questionList");
+
+// Build DOM first, then attach events (like original — works correctly)
+questions.forEach(q => {
+ const d = document.createElement("div");
+ d.className = "question-item";
+ d.id = "q-" + q.id;
+ d.innerHTML = `<div class="question-num">📝 第 ${q.id} 题</div>
+ <div class="question-text">${q.t}</div>
+ <div class="option-list" data-id="${q.id}">
+ <div class="option-btn" data-v="3">完全符合 (3分)</div>
+ <div class="option-btn" data-v="2">比较符合 (2分)</div>
+ <div class="option-btn" data-v="1">不太符合 (1分)</div>
+ <div class="option-btn" data-v="0">完全不符合 (0分)</div>
+ </div>`;
+ box.appendChild(d);
+});
+
+// Event delegation — clean, no quote issues
+document.querySelectorAll(".option-list").forEach(el => {
+ el.onclick = e => {
+   if (e.target.classList.contains("option-btn")) {
+     ans[el.dataset.id] = +e.target.dataset.v;
+     el.querySelectorAll(".option-btn").forEach(o => o.classList.remove("selected"));
+     e.target.classList.add("active");
+     el.closest(".question-item").classList.add("selected");
+     document.getElementById("submitBtn").disabled = Object.keys(ans).length !== 48;
+     updateProgress();
+   }
+ };
+});
+
+function updateProgress() {
+ const done = Object.keys(ans).length;
+ document.getElementById("progressBar").style.width = (done / questions.length * 100) + "%";
+ document.getElementById("progressText").textContent = done + " / " + questions.length;
+ const hint = document.getElementById("testHint");
+ if (done === questions.length) {
+   hint.textContent = "🎉 太棒了！所有题目已完成，点击提交答案查看结果！";
+   hint.style.color = "var(--primary)";
+ } else {
+   hint.textContent = "💡 请完成所有题目。(" + done + "/" + questions.length + ")";
+   hint.style.color = "#666";
+ }
+}
+
+// Button events
+document.getElementById("startBtn").onclick = () => {
+ ans = {};
+ showScreen("testScreen");
+};
+document.getElementById("homeBtn").onclick = () => showScreen("introScreen");
+document.getElementById("retestBtn").onclick = () => {
+ ans = {};
+ showScreen("introScreen");
+};
+document.getElementById("submitBtn").onclick = () => {
+ if (Object.keys(ans).length < 48) { alert("请完成所有题目再提交哦～ 😊"); return; }
+ calculateResult();
+};
+
+function calculateResult() {
+ const s = id => ans[id] || 0;
+ const styles = [
+  {n:"官僚型", s:s(4)+s(8)+s(19)+s(27)+s(33)+s(36), key:"bureaucratic", d:"重规则、讲流程、强执行，适合紧急决策、标准化场景"},
+  {n:"权威型", s:s(2)+s(17)+s(20)+s(25)+s(31)+s(38), key:"authoritative", d:"定方向、控全局、给标准，适合变革、定愿景场景"},
+  {n:"创新型", s:s(5)+s(12)+s(18)+s(26)+s(35)+s(40), key:"creative", d:"重愿景、敢冒险、鼓励创意，适合复杂问题、破局创新"},
+  {n:"带头型", s:s(6)+s(9)+s(21)+s(39)+s(47)+s(48), key:"pacesetting", d:"高效率、高标准、以身作则，适合高手团队、快速攻坚"},
+  {n:"民主型", s:s(3)+s(10)+s(32)+s(42)+s(43)+s(46), key:"democratic", d:"重共识、听意见、集体决策，适合集思广益、需要认同"},
+  {n:"亲和型", s:s(1)+s(13)+s(23)+s(24)+s(29)+s(44), key:"supportive", d:"重和谐、顾情绪、团队凝聚，适合提士气、修复关系"},
+  {n:"教练型", s:s(7)+s(15)+s(28)+s(37)+s(41)+s(45), key:"coaching", d:"重培养、给反馈、助力成长，适合人才发展、一对一辅导"},
+  {n:"无私型", s:s(11)+s(14)+s(16)+s(22)+s(30)+s(34), key:"servant", d:"重服务、善倾听、赋能他人，适合文化建设、长期团队"}
+ ];
+ styles.sort((a, b) => b.s - a.s);
+
+ const top = styles[0];
+ const result = styleData[top.key];
+ const matchPct = Math.round((top.s / 18) * 100);
+
+ // All scores for display
+ const allScoresHtml = styles.map(i => {
+   const d = styleData[i.key];
+   const pct = Math.round((i.s / 18) * 100);
+   return `<div style="display:flex;align-items:center;gap:12px;margin:6px 0;">
+     <span style="font-size:18px;">${d.emoji}</span>
+     <span style="font-weight:700;font-size:13px;color:${d.color};width:56px;">${d.name}</span>
+     <div style="flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden;">
+       <div style="height:100%;width:${pct}%;background:${d.color};border-radius:4px;transition:width .6s;"></div>
+     </div>
+     <span style="font-weight:700;font-size:14px;color:${d.color};width:40px;text-align:right;">${i.s}分</span>
+     <span style="font-size:12px;color:#999;width:36px;">${pct}%</span>
+   </div>`;
+ }).join('');
+
+ const othersHtml = styles.slice(1).map(i => {
+   const d = styleData[i.key];
+   return `<span class="other-style-chip" style="border-color:${d.color};color:${d.color};">${d.emoji} ${d.name} ${i.s}分</span>`;
+ }).join('');
+
+ const tipsHtml = result.tips.map(t => `<li>${t}</li>`).join('');
+ const viewHtml = styles.slice(1).map(i => {
+   const d = styleData[i.key];
+   return `<div class="others-view-card" style="border-color:${d.color};">
+     <span class="card-emoji">${d.emoji}</span>
+     <div>
+       <div class="card-label" style="color:${d.color};">${d.name}眼中：</div>
+       <div class="card-text">${result.view[i.key] || ''}</div>
+     </div>
+   </div>`;
+ }).join('');
+
+ document.getElementById("resultContent").innerHTML = `
+   <div class="result-header animate-in">
+     <div class="result-icon-wrap scale-in" style="background:${result.bg};">${result.emoji}</div>
+     <div class="type-badge" style="background:${result.bg};color:${result.color};">🏆 你的主导风格</div>
+     <div class="type-name" style="color:${result.color};">${result.name}</div>
+     <div class="match-badge">综合匹配度 ${matchPct}%</div>
+   </div>
+
+   <div class="analysis-box animate-in" style="animation-delay:.05s;">
+     <div class="box-title">📊 各风格得分一览</div>
+     ${allScoresHtml}
+   </div>
+
+   <div class="analysis-box animate-in" style="animation-delay:.1s;">
+     <div class="box-title">💬 ${result.name} — ${result.desc.split('！')[0]}！</div>
+     <p class="desc-text">${result.desc}</p>
+   </div>
+
+   <div class="analysis-box animate-in" style="animation-delay:.2s;">
+     <div class="box-title">🤝 与不同风格相处指南</div>
+     <ul class="tips-list">${tipsHtml}</ul>
+   </div>
+
+   <div class="analysis-box animate-in" style="animation-delay:.3s;">
+     <div class="box-title">👀 别人眼中的你</div>
+     <div class="others-view-grid">${viewHtml}</div>
+   </div>
+
+   <div class="other-styles animate-in" style="animation-delay:.35s;">
+     <span style="font-size:13px;color:#999;">其他风格：</span>${othersHtml}
+   </div>
+ `;
+
+ showScreen("resultScreen");
+}
+
+function showScreen(id) {
+ document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+}
+</script>
+</body>
+</html>

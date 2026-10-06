@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>测评中心 · 头马工具集</title>
+<meta name="description" content="沟通风格测评与领导风格测评，在线即测即得结果。">
+<style>
+  :root {
+    --wine: #772432;
+    --navy: #004165;
+    --amber: #F2DF74;
+    --bg: #F7F5F2;
+    --card: #FFFFFF;
+    --text: #2B2B2B;
+    --text-light: #6B6B6B;
+    --radius: 20px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px 32px;
+    line-height: 1.6;
+  }
+  .wrap { width: 100%; max-width: 880px; }
+  header { text-align: center; margin-bottom: 40px; }
+  .brand {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; letter-spacing: 2px; color: var(--wine);
+    font-weight: 600; margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 40px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--wine), var(--navy));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .sub { color: var(--text-light); font-size: 16px; max-width: 520px; margin: 0 auto; }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px; margin-bottom: 36px;
+  }
+  .card {
+    display: flex; flex-direction: column;
+    background: var(--card); border-radius: var(--radius);
+    padding: 32px 28px; text-decoration: none; color: inherit;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: transform .25s ease, box-shadow .25s ease;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; inset: 0 0 auto 0; height: 4px;
+    background: linear-gradient(90deg, var(--wine), var(--navy));
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(119, 36, 50, 0.14);
+  }
+  .icon { font-size: 40px; margin-bottom: 16px; line-height: 1; }
+  .card h2 { font-size: 21px; font-weight: 700; margin-bottom: 8px; color: var(--wine); }
+  .card p { color: var(--text-light); font-size: 14.5px; flex-grow: 1; margin-bottom: 20px; }
+  .meta {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    font-size: 12px; color: var(--text-light);
+  }
+  .tag {
+    background: rgba(0, 65, 101, 0.07); color: var(--navy);
+    padding: 4px 10px; border-radius: 50px; font-weight: 600;
+  }
+  .go {
+    margin-top: 18px; color: var(--wine); font-weight: 700; font-size: 15px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .go::after { content: '→'; transition: transform .25s ease; }
+  .card:hover .go::after { transform: translateX(4px); }
+  footer {
+    text-align: center; color: var(--text-light); font-size: 13px;
+    padding-top: 28px; border-top: 1px solid rgba(0, 0, 0, 0.07); width: 100%;
+  }
+  footer a { color: var(--navy); text-decoration: none; font-weight: 600; }
+  @media (max-width: 600px) {
+    body { padding: 32px 16px 24px; }
+    h1 { font-size: 30px; }
+    .card { padding: 26px 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">🍞 TOASTMASTERS TOOLKIT</div>
+    <h1>测评中心</h1>
+    <p class="sub">两项测评，即测即得结果。全部在你的浏览器本地完成，答案不会上传到任何服务器。</p>
+  </header>
+
+  <div class="grid">
+    <a class="card" href="./csi-deploy.html">
+      <div class="icon">💬</div>
+      <h2>CSI 沟通风格测评</h2>
+      <p>了解你在沟通中的风格倾向——怎样表达自己、如何被他人感知，以及最适合你的沟通场景。</p>
+      <div class="meta">
+        <span class="tag">12 道题</span>
+        <span class="tag">约 2 分钟</span>
+        <span class="tag">含分享海报</span>
+      </div>
+      <div class="go">开始测评</div>
+    </a>
+
+    <a class="card" href="./leadership-quiz.html">
+      <div class="icon">🎯</div>
+      <h2>领导风格测评</h2>
+      <p>发现你的领导力基因——你在团队中最自然的领导形态，以及与之匹配的沟通策略。</p>
+      <div class="meta">
+        <span class="tag">48 道题</span>
+        <span class="tag">约 5 分钟</span>
+        <span class="tag">8 种风格</span>
+      </div>
+      <div class="go">开始测评</div>
+    </a>
+  </div>
+
+  <footer>
+    测评作者：<a href="https://github.com/Regan-Sun" target="_blank" rel="noopener">孙煦明</a>
+  </footer>
+</div>
+</body>
+</html>

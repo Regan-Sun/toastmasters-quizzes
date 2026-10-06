@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSI 沟通风格测评 - 头马版</title>
+  <!-- 分享海报依赖 -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --primary: #25c5bd;
+      --primary-light: rgba(37, 197, 189, 0.08);
+      --primary-dark: #1a9e97;
+      --accent: #ad2624;
+      --bg: #f5f3f0;
+      --card: #ffffff;
+      --text: #333;
+      --text-light: #666;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --radius: 16px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "system-ui", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .shell { width: 100%; max-width: 680px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* Card */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px 36px;
+      text-align: center;
+    }
+    .hero-fullscreen {
+      min-height: 580px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    /* Logo */
+    .logo-wrap { margin-bottom: 8px; }
+    .logo-wrap img { max-width: 100px; border-radius: 12px; }
+
+    /* Hero */
+    .hero-emoji { font-size: 64px; line-height: 1; }
+    .hero-title {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle { font-size: 16px; color: var(--text-light); line-height: 1.7; max-width: 480px; }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; border: none;
+      padding: 14px 40px; border-radius: 50px;
+      font-size: 18px; font-weight: 600;
+      cursor: pointer; transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(37, 197, 189, 0.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 197, 189, 0.5); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: #f0f0f0; color: var(--text); border: none;
+      padding: 12px 28px; border-radius: 50px;
+      font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.3s;
+    }
+    .btn-secondary:hover { background: #e0e0e0; }
+    .btn-share {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff; border: none;
+      padding: 12px 28px; border-radius: 50px;
+      font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .btn-share:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
+
+    /* Quote */
+    .tm-quote {
+      font-size: 14px; color: var(--text-light); font-style: italic;
+      padding: 12px 20px; background: var(--primary-light);
+      border-radius: 12px; border-left: 4px solid var(--primary);
+    }
+    .author-link { font-size: 14px; color: var(--text-light); }
+    .author-link a { color: var(--primary-dark); text-decoration: none; font-weight: 600; }
+
+    /* Test Screen */
+    .test-container { padding: 28px 32px; text-align: left; }
+    .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .topbar-emoji { font-size: 22px; }
+    .progress { flex: 1; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      border-radius: 4px; transition: width 0.4s ease; width: 0%;
+    }
+    .progress-text { font-size: 14px; color: var(--text-light); font-weight: 600; min-width: 50px; text-align: right; }
+    .question-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px; }
+    .question-item {
+      padding: 20px; background: #fafafa;
+      border-radius: 12px; border: 2px solid transparent; transition: all 0.3s;
+    }
+    .question-item.selected { border-color: var(--primary); background: var(--primary-light); }
+    .question-num { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .question-text { font-size: 15px; font-weight: 600; margin-bottom: 14px; line-height: 1.5; }
+    .option-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .option-btn {
+      padding: 10px 14px; background: #fff;
+      border: 2px solid #e8e8e8; border-radius: 10px;
+      font-size: 14px; cursor: pointer; transition: all 0.25s;
+      text-align: left; line-height: 1.4;
+    }
+    .option-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+    .option-btn.selected { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .actions-bottom { border-top: 1px solid #eee; padding-top: 20px; }
+    .hint { font-size: 13px; color: var(--text-light); margin-bottom: 16px; text-align: center; }
+    .actions-buttons { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+    /* Result Screen */
+    .result-container { padding: 32px; text-align: center; }
+    .result-header { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 28px; }
+    .result-icon-wrap {
+      width: 120px; height: 120px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 56px; margin-bottom: 4px;
+    }
+    .result-caption { font-size: 18px; font-weight: 700; color: var(--text); }
+    .type-badge {
+      display: inline-block; padding: 6px 20px; border-radius: 50px;
+      font-size: 13px; font-weight: 600; margin-bottom: 8px;
+    }
+    .type-name { font-size: 42px; font-weight: 900; letter-spacing: 2px; margin-bottom: 4px; }
+    .type-subname { font-size: 20px; color: var(--text-light); margin-bottom: 12px; }
+    .match-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; padding: 6px 20px; border-radius: 50px;
+      font-size: 14px; font-weight: 700;
+    }
+    .analysis-box {
+      background: #fafafa; border-radius: 12px;
+      padding: 24px; text-align: left; margin-bottom: 16px;
+    }
+    .box-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+    .desc-text { font-size: 15px; line-height: 1.8; color: var(--text); margin-bottom: 16px; }
+    .tips-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .tips-list li { font-size: 14px; color: var(--text-light); padding-left: 20px; position: relative; }
+    .tips-list li::before { content: "💡"; position: absolute; left: 0; }
+
+    /* Share Buttons */
+    .share-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+
+    /* Others view cards */
+    .others-view-grid { display: flex; flex-direction: column; gap: 12px; }
+    .others-view-card {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 14px; background: #fff; border-radius: 10px;
+      border-left: 4px solid; text-align: left;
+    }
+    .others-view-card .card-emoji { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .others-view-card .card-label { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .others-view-card .card-text { font-size: 14px; color: #555; line-height: 1.6; }
+
+    /* Summit footer */
+    .summit-box {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding-top: 16px; border-top: 1px solid #eee;
+      font-size: 13px; color: var(--text-light);
+    }
+
+    /* Retest */
+    .retest-btn {
+      display: inline-block; margin-top: 16px;
+      padding: 10px 28px; border: 2px solid var(--primary); border-radius: 50px;
+      color: var(--primary); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.3s; background: transparent;
+    }
+    .retest-btn:hover { background: var(--primary); color: #fff; }
+
+    /* Other styles chips */
+    .other-styles { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .other-style-chip {
+      padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 600;
+      border: 2px solid #e0e0e0; color: var(--text-light);
+    }
+
+    /* Share poster modal */
+    #shareModal {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.6);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    #shareModal.active { display: flex; }
+    .modal-content {
+      background: #fff; border-radius: 20px; padding: 32px;
+      max-width: 420px; width: 100%; text-align: center;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .modal-sub { font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
+    #posterPreview { border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    #posterPreview canvas { width: 100% !important; height: auto !important; }
+    .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+    .btn-download {
+      background: linear-gradient(135deg, #11998e, #0f7b73);
+      color: #fff; border: none; padding: 14px; border-radius: 50px;
+      font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s;
+    }
+    .btn-download:hover { transform: translateY(-2px); }
+    .btn-close-modal {
+      background: #f0f0f0; color: var(--text); border: none;
+      padding: 12px; border-radius: 50px; font-size: 14px; cursor: pointer;
+    }
+    .loading-spinner {
+      display: inline-block; width: 20px; height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeInUp 0.5s ease forwards; }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .scale-in { animation: scaleIn 0.4s ease forwards; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .card { padding: 28px 20px; }
+      .hero-title { font-size: 26px; }
+      .option-list { grid-template-columns: 1fr; }
+      .type-name { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shell">
+
+    <!-- INTRO SCREEN -->
+    <section id="introScreen" class="screen active">
+      <div class="card hero-fullscreen">
+        <!-- LOGO: 替换 assets/logo.png 可自定义 logo -->
+        <div class="logo-wrap">
+          <img src="assets/logo.png" alt="logo" onerror="this.style.display='none'; document.querySelector('.logo-wrap').style.display='none'">
+        </div>
+        <div class="hero-emoji">💬</div>
+        <h1 class="hero-title">CSI 沟通风格测评</h1>
+        <p class="hero-subtitle">
+          🌟 Communication Style Indicator —— 每个人都有自己的沟通风格，你是直接果断、主动热情、支持温和，还是严谨分析？测评帮你认识自己的沟通偏好，找到与不同人高效交流的秘诀！认真你就输了 😏
+        </p>
+        <input id="userNameInput" type="text" maxlength="12" placeholder="请输入你的姓名（可选）" autocomplete="off"
+          style="padding:12px 16px;border:2px solid #e0e0e0;border-radius:50px;font-size:16px;outline:none;width:260px;text-align:center;transition:border-color .2s;"
+          onfocus="this.style.borderColor='#25c5bd'" onblur="this.style.borderColor='#e0e0e0'">
+        <div style="font-size:12px;color:#999;">不填写会显示“朋友”</div>
+        <button class="btn-primary" onclick="startTest()">🚀 开始测评</button>
+        <div class="tm-quote">"Where Leaders Are Made" —— 了解自己，才能更好地影响他人。💪</div>
+        <div class="author-link">👨‍💻 测评作者：孙煦明 | 基于 Toastmasters CS8206 手册</div>
+      </div>
+    </section>
+
+    <!-- TEST SCREEN -->
+    <section id="testScreen" class="screen">
+      <div class="card test-container">
+        <div class="topbar">
+          <span class="topbar-emoji">📝</span>
+          <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+          <div id="progressText" class="progress-text">0 / 12</div>
+        </div>
+        <div id="questionList" class="question-list"></div>
+        <div class="actions-bottom">
+          <div id="testHint" class="hint">💡 请完成所有题目，系统将为你分析沟通风格。</div>
+          <div class="actions-buttons">
+            <button class="btn-secondary" onclick="goHome()">🏠 返回首页</button>
+            <button class="btn-primary" id="submitBtn" onclick="submitTest()">提交答案</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section id="resultScreen" class="screen">
+      <div class="card result-container">
+        <div id="resultContent"></div>
+        <div class="share-actions">
+          <button class="btn-share" onclick="showShareModal()">📤 生成分享海报</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- SHARE POSTER MODAL -->
+  <div id="shareModal">
+    <div class="modal-content">
+      <div class="modal-title">📤 生成分享海报</div>
+      <div class="modal-sub">长按保存图片，或截图分享到社交媒体</div>
+      <div id="posterPreview"></div>
+      <div class="modal-actions">
+        <button class="btn-download" id="downloadBtn" onclick="downloadPoster()">⬇️ 保存图片</button>
+        <button class="btn-close-modal" onclick="closeShareModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HIDDEN POSTER TEMPLATE (for html2canvas) -->
+  <div id="posterTemplate" style="position:fixed;left:-9999px;top:-9999px;width:375px;background:#fff;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;">
+  </div>
+
+<script>
+// ===== 问卷题目 =====
+const questions = [
+  { num:1, emoji:"👀", text:"你希望别人眼里的你是这样的：", options:[
+    { label:"A. 和蔼可亲", value:"supportive" },
+    { label:"B. 坚定果断", value:"direct" },
+    { label:"C. 小心谨慎", value:"analytical" },
+    { label:"D. 有耐心", value:"supportive" }
+  ]},
+  { num:2, emoji:"🤝", text:"与他人合作时，你：", options:[
+    { label:"A. 竞争性强", value:"direct" },
+    { label:"B. 触景而发", value:"interactive" },
+    { label:"C. 善于合作", value:"supportive" },
+    { label:"D. 一丝不苟", value:"analytical" }
+  ]},
+  { num:3, emoji:"💬", text:"与他人分享感受时，你：", options:[
+    { label:"A. 拘谨", value:"analytical" },
+    { label:"B. 有同情心", value:"supportive" },
+    { label:"C. 不喜欢谈及私事", value:"direct" },
+    { label:"D. 自信", value:"interactive" }
+  ]},
+  { num:4, emoji:"🪞", text:"他人通常这样看我：", options:[
+    { label:"A. 温和有礼", value:"supportive" },
+    { label:"B. 风趣幽默", value:"interactive" },
+    { label:"C. 注重结果", value:"direct" },
+    { label:"D. 自律", value:"analytical" }
+  ]},
+  { num:5, emoji:"👔", text:"我喜欢的外表风格为：", options:[
+    { label:"A. 正式", value:"direct" },
+    { label:"B. 休闲", value:"supportive" },
+    { label:"C. 时尚", value:"interactive" },
+    { label:"D. 商务", value:"analytical" }
+  ]},
+  { num:6, emoji:"💪", text:"我希望在以下方面获得支持：", options:[
+    { label:"A. 目标", value:"interactive" },
+    { label:"B. 观点", value:"direct" },
+    { label:"C. 感受", value:"supportive" },
+    { label:"D. 想法", value:"analytical" }
+  ]},
+  { num:7, emoji:"📋", text:"做项目时，我：", options:[
+    { label:"A. 充满热情", value:"interactive" },
+    { label:"B. 雄心勃勃", value:"direct" },
+    { label:"C. 深思熟虑", value:"analytical" },
+    { label:"D. 持之以恒", value:"supportive" }
+  ]},
+  { num:8, emoji:"😤", text:"有些人会消极地看待我，认为我：", options:[
+    { label:"A. 优柔寡断", value:"supportive" },
+    { label:"B. 过于追求完美", value:"analytical" },
+    { label:"C. 意气用事", value:"interactive" },
+    { label:"D. 刚愎自用", value:"direct" }
+  ]},
+  { num:9, emoji:"👑", text:"作为领导者，人们认为我：", options:[
+    { label:"A. 专心致志", value:"direct" },
+    { label:"B. 喜欢冒险", value:"interactive" },
+    { label:"C. 值得信任", value:"supportive" },
+    { label:"D. 善于解决问题", value:"analytical" }
+  ]},
+  { num:10, emoji:"🌱", text:"处于新环境中时，我：", options:[
+    { label:"A. 认真负责", value:"analytical" },
+    { label:"B. 大胆无畏", value:"direct" },
+    { label:"C. 积极乐观", value:"interactive" },
+    { label:"D. 亲切友善", value:"supportive" }
+  ]},
+  { num:11, emoji:"🏆", text:"一份完美的职业会给予我：", options:[
+    { label:"A. 成就感", value:"direct" },
+    { label:"B. 愉悦感", value:"interactive" },
+    { label:"C. 认可感", value:"supportive" },
+    { label:"D. 精致感", value:"analytical" }
+  ]},
+  { num:12, emoji:"⚙️", text:"我最喜欢的工作方式是：", options:[
+    { label:"A. 交际", value:"interactive" },
+    { label:"B. 集体研讨", value:"supportive" },
+    { label:"C. 委派", value:"direct" },
+    { label:"D. 独立工作", value:"analytical" }
+  ]}
+];
+
+// ===== 风格数据 =====
+const styleData = {
+  direct: {
+    emoji:"🎯", color:"#ad2624", bgColor:"rgba(173,38,36,0.12)",
+    name:"DIRECT", cnName:"直接型",
+    caption:"目标导向，果断行动！🔥",
+    desc:"你是一个直接型沟通者！你坚定果断、求胜心切、独立自信。你专心致志、雄心勃勃、注重目标、有紧迫感。无聊时你缺乏耐心，喜欢掌控一切，通过成就和成功来衡量进步。你工作注重结果而不是关系，性子急，坚定果断，喜欢高效、结构化的环境。",
+    tips:[
+      "与直接型沟通：简练快速切入重点，具体避免赘述",
+      "与主动型沟通：营造友好氛围，腾出时间让他们表达感受",
+      "与支持型沟通：给予适时保证和认可，给他们留出做决定的时间",
+      "与分析型沟通：有条理地传达信息，准备好解答疑问"
+    ],
+    othersViewMe:{
+      supportive:"觉得你强势、有压迫感，但很欣赏你的效率和决断力。觉得你说话直接、不留情面，但关键时刻你是最靠得住的人。",
+      interactive:"觉得你太严肃、太目的导向了，缺乏情感温度。你总是那么着急，好像永远在赶时间。希望你能多听听别人的感受。",
+      analytical:"觉得你做决定太快、不够细致，有点冲动。他们欣赏你的行动力，但也担心你因为太急而出错。"
+    }
+  },
+  interactive: {
+    emoji:"🎉", color:"#f5a623", bgColor:"rgba(245,166,35,0.12)",
+    name:"INTERACTIVE", cnName:"主动型",
+    caption:"社交达人，自带光环！✨",
+    desc:"你是一个主动型沟通者！你和蔼可亲，富有热情，充满活力，自然风趣。爱好交际的你渴望被认可，看重关系，极其能够接受赞扬和肯定。你自信、富有创新精神、具有说服力，性子急，有时容易冲动。你喜欢鼓舞人心、关系紧密、和睦的工作环境。",
+    tips:[
+      "与直接型沟通：聚焦解决方案，只在要求时提供细节",
+      "与主动型沟通：预留社交时间，营造友好没有威胁的氛围",
+      "与支持型沟通：建立信任，表达关心和支持",
+      "与分析型沟通：提供数据和逻辑支持，耐心解答问题"
+    ],
+    othersViewMe:{
+      direct:"觉得你话太多、容易跑题，抓不住重点。他们觉得你很有感染力，但也担心你太情绪化了。",
+      supportive:"喜欢你热情友好，但觉得你有时候太闹腾，让人有点喘不过气。他们觉得你就像一颗小太阳，但偶尔也需要安静一下。",
+      analytical:"觉得你不够严谨，说话容易夸大。他们欣赏你的创意和热情，但希望你下次汇报前能先核实一下数据。"
+    }
+  },
+  supportive: {
+    emoji:"🤗", color:"#25c5bd", bgColor:"rgba(37,197,189,0.12)",
+    name:"SUPPORTIVE", cnName:"支持型",
+    caption:"温暖守护，值得信赖！💚",
+    desc:"你是一个支持型沟通者！你沉着稳重，平易近人，真诚温和。你细致，友善，有耐心，具备主动倾听的技巧。他人会认为你具有合作精神，值得信任，忠诚。你常常保持谦恭，更喜欢私下接受赞扬。你有耐心，是个慢性子，喜欢关系紧密、放松、没有压力的环境。你看重亲密关系，不喜欢与他人起冲突，但在需要时会发挥调解作用。",
+    tips:[
+      "与直接型沟通：快速回应，展示你的能力和效率",
+      "与主动型沟通：积极参与社交，展示热情和活力",
+      "与支持型沟通：建立深度的情感连接，保持真诚",
+      "与分析型沟通：提供具体的数据和逻辑支持"
+    ],
+    othersViewMe:{
+      direct:"觉得你反应慢、缺乏主见，有点拿不定主意。他们觉得你很可靠、值得信任，但希望在关键时刻你能更果断一些。",
+      interactive:"觉得你温暖可靠，是最好的倾听者。他们喜欢和你聊天，因为你从不评判。但有时也希望你更主动表达自己的想法。",
+      analytical:"欣赏你的稳定和耐心，觉得你是团队里的定海神针。但也希望你做决定时能稍微快一点，别等太久才给反馈。"
+    }
+  },
+  analytical: {
+    emoji:"🔬", color:"#7b79d6", bgColor:"rgba(123,121,214,0.12)",
+    name:"ANALYTICAL", cnName:"分析型",
+    caption:"深思熟虑，稳扎稳打！🧠",
+    desc:"你是一个分析型沟通者！你一丝不苟，要求精确，善于分析，讲究逻辑性。你做事有条理，以任务为中心，有时被认为是完美主义者。你依靠自己，坚定果断，讲究策略。日常行事基于对事务的确定性，如果不被问及，很少发表意见。你生性缓慢谨慎，喜欢结构化、有序的功能性环境。由于需要确信自己的状况和他人的期望，你很少谈及私人信息，不轻易表达情感。",
+    tips:[
+      "与直接型沟通：展示结果导向，给出明确的行动建议",
+      "与主动型沟通：适度参与社交，提供支持性反馈",
+      "与支持型沟通：放慢节奏，建立情感连接",
+      "与分析型沟通：深入探讨细节，展示专业性和逻辑性"
+    ],
+    othersViewMe:{
+      direct:"觉得你分析过度、太追求完美，做决定太慢。他们欣赏你的专业和严谨，但觉得你有时候是在用细节来回避风险。",
+      supportive:"觉得你过于严肃、不够有温度。觉得你思考时把自己封闭起来了。希望你能多分享感受，别总一个人闷头想。",
+      interactive:"觉得你太过保守、缺乏冒险精神。他们觉得你很有能力，但有时候需要敢于拍板，而不是一直论证。"
+    }
+  }
+};
+
+// ===== 状态 =====
+let answers = {};
+let currentResult = null;   // { topStyle, scores, sorted, matchPct }
+let userName = '';
+let generatedPosterBlob = null;
+
+// ===== 渲染题目 =====
+function renderQuestions() {
+  const list = document.getElementById('questionList');
+  list.innerHTML = '';
+  questions.forEach(q => {
+    const item = document.createElement('div');
+    item.className = 'question-item';
+    item.id = `q-${q.num}`;
+    item.innerHTML = `
+      <div class="question-num">${q.emoji} 第 ${q.num} 题</div>
+      <div class="question-text">${q.text}</div>
+      <div class="option-list">
+        ${q.options.map(opt => `
+          <button class="option-btn" data-q="${q.num}" data-val="${opt.value}" onclick="selectOption(${q.num}, '${opt.value}', this)">
+            ${opt.label}
+          </button>
+        `).join('')}
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function selectOption(num, value, btn) {
+  answers[num] = value;
+  const item = document.getElementById(`q-${num}`);
+  item.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  item.classList.add('selected');
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = Object.keys(answers).length;
+  const pct = (done / questions.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} / ${questions.length}`;
+  const hint = document.getElementById('testHint');
+  if (done === questions.length) {
+    hint.textContent = '🎉 太棒了！所有题目已完成，点击"提交答案"查看结果！';
+    hint.style.color = '#25c5bd';
+  } else {
+    hint.textContent = `💡 请完成所有题目，系统将为你分析沟通风格。（${done}/${questions.length}）`;
+    hint.style.color = '#666';
+  }
+}
+
+function startTest() {
+  const input = document.getElementById('userNameInput');
+  if (input) {
+    const name = input.value.trim();
+    // 姓名可选：不填默认“朋友”，不拦用户
+    userName = name || '朋友';
+    if (input) input.style.borderColor = '#e0e0e0';
+  }
+  answers = {};
+  renderQuestions();
+  // 进度条加上姓名展示
+  const topbar = document.querySelector('.topbar');
+  if (topbar && !topbar.querySelector('.topbar-name')) {
+    const span = document.createElement('span');
+    span.className = 'topbar-name';
+    span.style.cssText = 'font-size:13px;color:#25c5bd;font-weight:600;padding:2px 10px;background:rgba(37,197,189,0.1);border-radius:20px;white-space:nowrap;';
+    span.textContent = '👤 ' + userName;
+    topbar.insertBefore(span, topbar.firstChild);
+  } else if (topbar) {
+    topbar.querySelector('.topbar-name').textContent = '👤 ' + userName;
+  }
+  showScreen('testScreen');
+}
+
+function goHome() { showScreen('introScreen'); }
+
+function submitTest() {
+  if (Object.keys(answers).length < questions.length) {
+    alert('请完成所有题目再提交哦～ 😊');
+    return;
+  }
+  calculateAndShowResult();
+}
+
+function calculateAndShowResult() {
+  const scores = { direct:0, interactive:0, supportive:0, analytical:0 };
+  Object.values(answers).forEach(v => { if (scores.hasOwnProperty(v)) scores[v]++; });
+
+  const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+  const topStyle = sorted[0][0];
+  const maxScore = sorted[0][1];
+  const total = questions.length;
+  const result = styleData[topStyle];
+  const matchPct = Math.round((maxScore / total) * 100);
+
+  currentResult = { topStyle, scores, sorted, matchPct };
+
+  const others = sorted.slice(1).map(([style, score]) => {
+    const d = styleData[style];
+    return `<span class="other-style-chip" style="border-color:${d.color};color:${d.color}">${d.emoji} ${d.cnName} ${score}分</span>`;
+  }).join('');
+
+  const maxPossible = questions.length; // 12
+  const allScoresHtml = sorted.map(([style, score]) => {
+    const d = styleData[style];
+    const pct = Math.round((score / maxPossible) * 100);
+    const barWidth = Math.round((score / maxPossible) * 100);
+    return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <span style="font-size:20px;">${d.emoji}</span>
+      <span style="font-weight:700;font-size:14px;color:${d.color};width:60px;">${d.cnName}</span>
+      <div style="flex:1;height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden;">
+        <div style="height:100%;width:${barWidth}%;background:${d.color};border-radius:5px;transition:width .6s ease;"></div>
+      </div>
+      <span style="font-weight:700;font-size:14px;color:${d.color};width:50px;text-align:right;">${score}分</span>
+      <span style="font-size:12px;color:#999;width:40px;">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  const content = document.getElementById('resultContent');
+  content.innerHTML = `
+    <div class="result-header animate-in">
+      <div class="result-icon-wrap scale-in" style="background:${result.bgColor};">
+        ${result.emoji}
+      </div>
+      <div class="result-caption">${userName ? userName + '，' : ''}${result.caption}</div>
+      <div class="type-badge" style="background:${result.bgColor};color:${result.color};">🏆 你的主类型</div>
+      <div class="type-name" style="color:${result.color};">${result.name}</div>
+      <div class="type-subname">${result.cnName}</div>
+      <div class="match-badge">匹配度 ${matchPct}%</div>
+    </div>
+
+    <div class="analysis-box animate-in" style="animation-delay:0.05s;">
+      <div class="box-title">📊 各风格得分一览</div>
+      ${allScoresHtml}
+    </div>
+
+    <div class="other-styles animate-in" style="animation-delay:0.1s;">
+      <span style="font-size:13px;color:#999;">其他风格：</span>
+      ${others}
+    </div>
+
+    <div class="analysis-box animate-in" style="animation-delay:0.2s;">
+      <div class="box-title">💬 沟通风格解读</div>
+      <p class="desc-text">${result.desc}</p>
+    </div>
+
+    <div class="analysis-box animate-in" style="animation-delay:0.3s;">
+      <div class="box-title">🤝 与不同风格相处指南</div>
+      <ul class="tips-list">
+        ${result.tips.map(t => `<li>${t}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="analysis-box animate-in" style="animation-delay:0.4s;">
+      <div class="box-title">👀 别人眼中的你</div>
+      <div class="others-view-grid">
+        ${sorted.slice(1).map(([style, score]) => {
+          const sd = styleData[style];
+          return `
+            <div class="others-view-card" style="border-color:${sd.color};">
+              <span class="card-emoji">${sd.emoji}</span>
+              <div>
+                <div class="card-label" style="color:${sd.color};">${sd.cnName}眼中：</div>
+                <div class="card-text">${result.othersViewMe[style]}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="summit-box animate-in" style="animation-delay:0.45s;">
+      <span>🌟 测评作者：孙煦明 | 基于 Toastmasters CS8206 设计</span>
+    </div>
+  `;
+
+  showScreen('resultScreen');
+}
+
+function retest() { answers = {}; currentResult = null; startTest(); }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ===== 海报生成 =====
+async function showShareModal() {
+  if (!currentResult) return;
+  const modal = document.getElementById('shareModal');
+  const preview = document.getElementById('posterPreview');
+  const dlBtn = document.getElementById('downloadBtn');
+
+  modal.classList.add('active');
+  preview.innerHTML = '<div style="padding:40px;color:#999;">正在生成海报...</div>';
+  dlBtn.disabled = true;
+  dlBtn.innerHTML = '<span class="loading-spinner"></span>生成中...';
+
+  try {
+    await generatePoster();
+    preview.innerHTML = '';
+    const canvas = await html2canvas(document.getElementById('posterTemplate'), {
+      scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#fff'
+    });
+    const dataUrl = canvas.toDataURL('image/png');
+    preview.innerHTML = `<img src="${dataUrl}" style="width:100%;border-radius:12px;">`;
+    dlBtn.disabled = false;
+    dlBtn.innerHTML = '⬇️ 保存图片';
+    generatedPosterBlob = dataUrl;
+  } catch(e) {
+    preview.innerHTML = '<div style="padding:30px;color:#ad2624;">生成失败，请重试 😅</div>';
+    dlBtn.innerHTML = '重试';
+    console.error(e);
+  }
+}
+
+function closeShareModal() {
+  document.getElementById('shareModal').classList.remove('active');
+  document.getElementById('posterPreview').innerHTML = '';
+}
+
+function generatePoster() {
+  const { topStyle, matchPct } = currentResult;
+  const result = styleData[topStyle];
+  const { sorted } = currentResult;
+
+  const others = sorted.slice(1).map(([style, score]) => {
+    const sd = styleData[style];
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${sd.bgColor};border-radius:8px;margin-bottom:8px;">
+        <span style="font-size:18px;">${sd.emoji}</span>
+        <span style="font-weight:700;font-size:13px;color:${sd.color};">${sd.cnName}</span>
+        <span style="font-size:13px;color:#666;margin-left:auto;">${score}分</span>
+      </div>`;
+  }).join('');
+
+  const tmpl = document.getElementById('posterTemplate');
+  tmpl.innerHTML = `
+    <div style="width:375px;background:#f5f3f0;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;padding:0;">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,#25c5bd,#1a9e97);padding:32px 24px;text-align:center;">
+        <div style="width:72px;height:72px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;">💬</div>
+        <div style="color:#fff;font-size:13px;opacity:0.8;">Communication Style Indicator</div>
+        <div style="color:#fff;font-size:22px;font-weight:800;margin-top:4px;">CSI 沟通风格测评</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-top:6px;">作者：孙煦明 | 基于 Toastmasters CS8206</div>
+      </div>
+
+      <!-- Result -->
+      <div style="background:#fff;margin:16px;border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <div style="width:80px;height:80px;border-radius:50%;background:${result.bgColor};display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 12px;">${result.emoji}</div>
+        ${userName ? `<div style="font-size:18px;font-weight:800;color:#333;margin-bottom:6px;">👤 ${userName}</div>` : ''}
+        <div style="font-size:13px;color:#999;margin-bottom:4px;">🏆 你的主类型</div>
+        <div style="font-size:30px;font-weight:900;color:${result.color};letter-spacing:1px;">${result.name}</div>
+        <div style="font-size:16px;color:#666;margin:4px 0 12px;">${result.cnName}</div>
+        <div style="display:inline-block;background:linear-gradient(135deg,#25c5bd,#1a9e97);color:#fff;padding:4px 18px;border-radius:50px;font-size:13px;font-weight:700;">匹配度 ${matchPct}%</div>
+      </div>
+
+      <!-- Others -->
+      <div style="background:#fff;margin:0 16px 16px;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:#333;">📊 其他风格得分</div>
+        ${others}
+      </div>
+
+      <!-- Footer -->
+      <div style="text-align:center;padding:0 16px 24px;">
+        <div style="background:linear-gradient(135deg,rgba(37,197,189,0.1),rgba(37,197,189,0.05));border-radius:12px;padding:14px;border:1px dashed #25c5bd;">
+          <div style="font-size:12px;color:#25c5bd;font-weight:600;">🌟 Where Leaders Are Made</div>
+          <div style="font-size:11px;color:#999;margin-top:4px;">了解自己，才能更好地影响他人</div>
+        </div>
+      </div>
+    </div>`;
+
+  return Promise.resolve();
+}
+
+function downloadPoster() {
+  if (!generatedPosterBlob) return;
+  const a = document.createElement('a');
+  a.href = generatedPosterBlob;
+  a.download = `CSI沟通风格_${userName || '匿名'}_${currentResult.topStyle}_${Date.now()}.png`;
+  a.click();
+}
+</script>
+</body>
+</html>
