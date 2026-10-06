@@ -26,6 +26,8 @@ body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sa
 .test-container{padding:28px 32px;text-align:left}
 .topbar{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .topbar-emoji{font-size:22px}
+.topbar-name{font-size:14px;color:var(--text-light);white-space:nowrap}
+.name-input-wrap{margin:22px 0 4px;display:flex;justify-content:center}
 .progress{flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden}
 .progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-dark));border-radius:4px;transition:width .4s ease;width:0%}
 .progress-text{font-size:14px;color:var(--text-light);font-weight:600;min-width:50px;text-align:right}
@@ -79,14 +81,20 @@ body{font-family:-apple-system,"system-ui","Segoe UI","PingFang SC","Hiragino Sa
 <div class="hero-emoji">🎯</div>
 <h1 class="hero-title">领导风格测评</h1>
 <p class="hero-subtitle">🌟 Leadership Style Indicator —— 每个人都有独特的领导风格，你是重规则、讲愿景，还是关注赋能、培养人？测评帮你发现自己的主导领导风格！</p>
-<button class="btn-primary" id="startBtn">🚀 开始测评</button>
+ <div class="name-input-wrap">
+  <input id="userNameInput" type="text" maxlength="12" placeholder="请输入你的姓名（可选）" autocomplete="off"
+   style="padding:12px 16px;border:2px solid #e0e0e0;border-radius:50px;font-size:16px;outline:none;width:260px;text-align:center;transition:border-color .2s;"
+   onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e0e0e0'">
+ </div>
+ <p style="font-size:13px;color:var(--text-light);margin-top:8px;">不填写会显示"朋友"</p>
+ <button class="btn-primary" id="startBtn">🚀 开始测评</button>
 <div class="tm-quote">"Where Leaders Are Made" —— 了解自己的领导风格，才能带出更好的团队。</div>
 <div class="author-link">👨‍💻 测评作者：孙煦明 | 8种领导风格深度解读</div>
 </div>
 </section>
 <section id="testScreen" class="screen">
 <div class="card test-container">
-<div class="topbar"><span class="topbar-emoji">📝</span><div class="progress"><div id="progressBar" class="progress-bar"></div></div><div id="progressText" class="progress-text">0 / 48</div></div>
+<div class="topbar"><span class="topbar-emoji">📝</span><span class="topbar-name" id="topbarName"></span><div class="progress"><div id="progressBar" class="progress-bar"></div></div><div id="progressText" class="progress-text">0 / 48</div></div>
 <div id="questionList" class="question-list"></div>
 <div class="actions-bottom">
 <div id="testHint" class="hint">💡 请完成所有题目，系统将为你分析领导风格。</div>
@@ -166,6 +174,7 @@ const styleData = {
 };
 
 let ans = {};
+ let userName = '';
 const box = document.getElementById("questionList");
 
 // Build DOM first, then attach events (like original — works correctly)
@@ -214,6 +223,10 @@ function updateProgress() {
 
 // Button events
 document.getElementById("startBtn").onclick = () => {
+ const input = document.getElementById("userNameInput");
+ if (input) { const name = input.value.trim(); userName = name || '朋友'; }
+ const topbarName = document.getElementById("topbarName");
+ if (topbarName) topbarName.textContent = userName ? '👤 ' + userName : '';
  ans = {};
  showScreen("testScreen");
 };
@@ -279,6 +292,7 @@ function calculateResult() {
 
  document.getElementById("resultContent").innerHTML = `
    <div class="result-header animate-in">
+     ${userName ? `<div style="font-size:18px;font-weight:800;color:#333;margin-bottom:4px;">👤 ${userName}</div>` : ''}
      <div class="result-icon-wrap scale-in" style="background:${result.bg};">${result.emoji}</div>
      <div class="type-badge" style="background:${result.bg};color:${result.color};">🏆 你的主导风格</div>
      <div class="type-name" style="color:${result.color};">${result.name}</div>
